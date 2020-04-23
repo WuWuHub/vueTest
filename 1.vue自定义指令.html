@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script type="text/javascript" src='./js/vue.min.js'></script>
+    <title>vue自定义指令directive</title>
+    <style>
+       #box{
+           position: absolute;
+           top:100px;
+           left:100px;
+           width:80px;
+           height: 80px;
+           background: blue;
+       }
+       #box2{
+           position: absolute;
+           top:100px;
+           left:200px;
+           width:60px;
+           height: 60px;
+           background: blue;
+       }
+    </style>
+    
+</head>
+<body>
+    <div id="app" style="position: relative;">
+        <!-- 
+            给第二元素添加拖拽指令时，会出现鼠标位置跑到元素外边去
+            原因：offsetLeft offsetTop
+                 这两个属性是获取元素边框距离父元素边框的距离(X Y 值)
+                 但是又根据父元素的定位问题而有所不同*****
+            
+            ***解决：
+                给发元素也添加定位
+         -->
+       
+            <div id='box' v-drap></div>
+            <div id='box2' v-drap></div>
+        
+        
+    </div>
+
+     
+     <script type="text/javascript">
+        //  /*
+        //     vue自定义指令：directive
+        //        全局指令  --定义在外部
+        //        局部指令  --定义在内部
+        //  */
+        Vue.directive("drap",{
+            inserted:function(el){
+                let box=el;    //el为目标元素
+                let x=0;  //初始化鼠标相对于元素中的位置
+                let y=0;  //初始化鼠标相对于元素中的位置
+                box.onmousedown=function(e){
+                    console.log(111)
+                    let x=e.clientX-box.offsetLeft;
+                    let y=e.clientY-box.offsetTop;
+               
+                 document.onmousemove=function(e){
+                     console.log(2222)
+                     let translateX=e.clientX-x;
+                     let translateY=e.clientY-y;
+                     box.style.top=translateY+'px';
+                     box.style.left=translateX+'px';
+                 }
+                document.onmouseup=function(e){
+                    console.log(333)
+                      document.onmousemove=null;
+                      document.onmouseup=null
+                 }
+              }
+            }
+        })
+        let vm=new Vue({
+            el:'#app',
+        })
+     </script>
+</body>
+</html>

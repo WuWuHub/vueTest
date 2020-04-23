@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>vue组件</title>
+		<style>
+			.pag{
+				padding:10px;
+			}
+			.pag span{
+				padding:10px;
+				margin-left:5px;
+				border:1px solid #999;
+			}
+			.active{
+				background: #0000FF;
+				color:white
+			}
+		</style>
+	</head>
+	<body>
+	    <div id='app'>
+			<ul>
+				<li v-for="item in showPageUser" :key="item.id" :total='users.length'>
+					{{item.id}}-{{item.name}}
+				</li>
+			</ul>
+			<hr/>
+			<my-component @change="setPage" :page="userpage" :pageSize="pageCount" :total='users.length'></my-component>
+		</div>
+		
+		<script src="js/vue.min.js"></script>
+		<script>
+			Vue.component('MyComponent',{
+				props:{
+					total:{
+						type:Number,
+						defaule:''
+					},
+					page:{
+						type:Number,
+						defaule:1
+					},
+					pageSize:{
+						type:Number,
+						default:2
+					}
+				},
+				template:`<div class='pag'>
+				             <span 
+							   v-for="p in pages" 
+							   :key="p"
+							   @click="changePage(p)"
+							   :class="{active:p===page}"
+							  >{{p}}</span>
+				          </div>`,
+				data(){
+					return{
+						pages:Math.ceil(this.total/this.pageSize)
+					}
+				},
+				methods:{
+					changePage(p){
+						//this.page=p
+						this.$emit('change',p)
+					}
+				}
+			})
+			let vm=new Vue({
+				el:'#app',
+				data:{
+					users:[
+						{id:0,name:"apple",price:'11'},
+						{id:1,name:"pear",price:'11'},
+						{id:2,name:"bannar",price:'11'},
+						{id:3,name:"oringe",price:'11'},
+						{id:4,name:"sabway",price:'11'},
+						{id:5,name:"peni",price:'11'},
+						{id:6,name:"vargable",price:'11'}
+					],
+					userpage:1,
+					pageCount:2
+				},
+				computed:{
+					showPageUser(){
+						let start=(this.userpage-1)*this.pageCount;
+						let end=start+this.pageCount;
+						return this.users.filter((user, index) => index >= start && index < end)
+					}
+				},
+				methods:{
+					setPage(p){
+						this.userpage=p
+					}
+				}
+			})
+		</script>
+		
+	</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<style>
+			.active{
+				background: #0000FF;
+				color: white;
+			}
+		</style>
+	</head>
+	<body>
+		<div id='app'>
+			<input type='button' value='所有' :class="{active:gender==''}" @click="gender=''"/>
+			<input type='button' value='男' :class="{active:gender=='男'}" @click="gender='男'"/>
+			<input type='button' value='女' :class="{active:gender=='女'}" @click="gender='女'"/>
+			
+			<ul>
+				<li v-for="item of showUsers" :key='item.id'>
+					<input type='checkbox' v-model="item.checked" />
+					{{item.id}}--{{item.username}}--{{item.gender}}
+					
+				</li>
+			</ul>
+			
+			<input type='checkbox' v-model="isChecked" />全选
+		</div>
+		<script src='js/vue.min.js'></script>
+		<script>
+			let vm=new Vue({
+				el:'#app',
+				data:{
+					users: [
+					      {id: 1, username: 'baogege', gender: '男',checked:false},
+					      {id: 2, username: 'mt', gender: '男',checked:false},
+					      {id: 3, username: 'haigege', gender: '男',checked:false},
+					      {id: 4, username: 'zMouse', gender: '男',checked:false},
+					      {id: 5, username: 'reci', gender: '女',checked:false},
+					      {id: 6, username: 'lisi', gender: '女',checked:false}
+					    ],
+						gender:"",
+				},
+				computed:{
+					showUsers(gender){
+						return this.gender==""?[...this.users]:this.users.filter((item,index)=>item.gender==this.gender)
+					},
+					isChecked:{
+						get(){
+							return this.users.every(item=>item.checked)
+						},
+						set(newValue){
+							this.users=this.users.map(item=>{
+								return {
+									...item,
+									checked:newValue
+								}
+							})
+						}
+					}
+				},
+			})
+		</script>
+	</body>
+</html>

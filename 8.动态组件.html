@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>动态组件</title>
+    <style>
+       .active{
+           background: blue;
+           color:white;
+       }
+    </style>
+</head>
+<body>
+    
+    <div id='app'>
+          <button :class="{'active':current==='indexNav'}" @click="change('indexNav')">首页</button>
+          <button :class="{'active':current==='writeMail'}" @click="change('writeMail')">写邮件</button>
+          <button :class="{'active':current==='deleteMail'}" @click="change('deleteMail')">删除邮件</button>
+          
+          <hr />
+          <!-- 这样写太麻烦 -->
+        <!-- <index-nav v-if="current==='indexNav'"></index-nav>
+        <write-mail v-if="current==='writeMail'"></write-mail>
+        <delete-mail v-if="current==='deleteMail'"></delete-mail> -->
+        <!-- 使用动态组件改写：
+             vue内置组件:component 
+             component提供一个属性用于动态渲染不同组件
+        -->
+
+        <!-- 
+            每次组件切换都触发了组件的创建和卸载
+            如果这是数据并没有翻身变化的话们就会很消耗性能
+            keep-alive是vue内置组件，它包裹的组件具有缓存效果
+        -->
+        <keep-alive>
+            <component :is='current'></component>
+        </keep-alive>
+        
+
+    </div>
+    <script src="js/vue.min.js"></script>
+    <script>
+        const indexNav={
+            data(){
+                return{
+                    users: [
+                        { id: 1, username: 'baogege', gender: '男', checked: false },
+                        { id: 2, username: 'mt', gender: '男', checked: false },
+                        { id: 3, username: 'haigege', gender: '男', checked: false },
+                        { id: 4, username: 'zMouse', gender: '男', checked: false },
+                        { id: 5, username: 'reci', gender: '女', checked: false },
+                        { id: 6, username: 'lisi', gender: '女', checked: false }
+                    ],
+                }
+            },
+            template:`<ul>
+                <li v-for='name of users' :key="name.id">
+                     <input type='checkbox' :checked='name.checked' />
+                    {{name.id}}--{{name.username}}
+                </li>
+            </ul>`
+        }
+        const writeMail={
+            template:`<div>写邮件</div>`
+        }
+        const deleteMail={
+            template:`<div>删除邮件</div>`
+        }
+        let vm=new Vue({
+            el:"#app",
+            data:{
+               current:'indexNav'
+            },
+            components:{
+                indexNav,
+                writeMail,
+                deleteMail
+            },
+            methods:{
+                change(target){
+                    //console.log(11)
+                    this.current=target 
+                }
+            }
+        })
+    </script>
+</body>
+</html>

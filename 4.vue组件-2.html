@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>vue组件-2</title>
+		<style>
+			.pag{
+				padding:10px;
+			}
+			.pag span{
+				padding:10px;
+				margin-left:5px;
+				border:1px solid #999;
+			}
+			.active{
+				background: #0000FF;
+				color:white
+			}
+		</style>
+	</head>
+	<body>
+		<div id='app'>
+			<ul>
+				<li v-for="item of showPageNames" :key="item.id">
+					{{item.id}}--{{item.name}}
+				</li>
+			</ul>
+			<!-- //父元素传值给子元素
+			//子元素要关联父元素进行数据渲染 -->
+			<!-- 
+			    子组件通过$emit广播过来的事件名称及参数 
+				广播过来的事件名即为父组件的事件参数
+				要操控父组件数据需要重新定义一个父组件里的事件
+			 -->
+			<my-component 
+			   @change="setPage"
+			   :total='users.length'
+			   :pageSize="pagecount"
+			   :nowpage="page"
+			></my-component>
+		</div>
+		
+		
+		
+		<script src="js/vue.min.js"></script>
+		
+		<script>
+			Vue.component("myComponent",{
+				// 子元素通过props接收父元素传递的值
+				props:{
+					total:{
+						type:Number,  //数据类型
+						default:1,   //默认值
+					},
+					pageSize:{
+						type:Number,
+						default:2,
+					},
+					nowpage:{
+						type:Number,
+						default:1,
+					}
+				},
+				data(){
+					return{
+						pages:Math.ceil((this.total/this.pageSize))
+					}
+				},
+				template:`<div class='pag'>
+					  <span 
+					      v-for="p of pages" 
+						  :key="p"
+						  :class="{active:nowpage===p}"
+						  @click="changeNowopage(p)"
+						>{{p}}</span>
+					</div>
+				`,
+				methods:{
+					changeNowopage(p){
+						//this.nowpage=p
+						//子组件想要操作父组件的数据；使用 $emit事件广播
+						this.$emit('change',p)
+					}
+				}
+			});
+			let vm=new Vue({
+				el:'#app',
+				data:{
+					users:[
+						{id:0,name:"zhangsan",price:'11'},
+						{id:1,name:"lisi",price:'11'},
+						{id:2,name:"wanger",price:'11'},
+						{id:3,name:"mazi",price:'11'},
+						{id:4,name:"xiaoming",price:'11'},
+						{id:5,name:"dali",price:'11'},
+						{id:6,name:"tiantian",price:'11'},
+						{id:7,name:"xiaowen",price:'11'}
+					],
+					pagecount:2,  //每页展示数据
+					page:1    //当前为第一页
+				},
+				computed:{
+					showPageNames(){
+						let start=(this.page-1)*this.pagecount;
+						let end=start+this.pagecount;
+						return this.users.filter((item,index)=>index>=start&&index<end)
+					}
+				},
+				methods:{
+					setPage(p){
+						this.page=p
+					}
+				}
+			})
+		</script>
+		
+	</body>
+</html>

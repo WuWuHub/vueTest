@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>vue动画</title>
+    <style>
+       .box{
+           width:100px;
+           height: 100px;
+           background: red;
+           
+       }
+       .my-enter{
+           width:100px;
+           height: 100px;
+       }
+       .my-enter-active{
+         transition: 0.5s all;
+       }
+       .my-enter-to{
+           width:400px;
+           height: 400px;
+           background: yellow;
+       }
+       .my-leave{
+           width:400px;
+           height: 400px;
+            background: yellow;
+       }
+       .my-leave-active{
+           transition: 0.5s all;
+       }
+       .my-leave-to{
+           width:100px;
+           height: 100px;
+       }
+    </style>
+</head>
+<body>
+    <div id='app'>
+        <button @click='anima'>切换</button>
+
+        <!-- vue 内置组件：transition 
+             属性：v-enter v-enter-active v-enter-to
+                   v-leave v-leave-active v-leaver-to
+            
+            使用v-if 来进行动画时，会不断触发组件的 create destroyed 周期函数；很耗性能
+
+            使用内置组件transition组件包裹动画元素
+
+        -->
+        <transition name='my'>
+            <div class="box" v-if="isShow"></div>
+        </transition>
+        
+    </div>
+
+    <script src='js/vue.min.js'></script>
+    <script>
+       let vm=new Vue({
+           el:"#app",
+           data:{
+               isShow:false,
+           },
+           methods: {
+               anima(){
+                   this.isShow=!this.isShow
+               }
+           }
+           
+       })
+    </script>
+</body>
+</html>
